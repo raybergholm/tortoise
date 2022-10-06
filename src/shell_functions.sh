@@ -34,17 +34,3 @@ git-sync()
   git pull
   git checkout $current_branch
 }
-
-# About to do some messy rebasing? Bookmark your current state as a separate branch first.
-# Optional first arg lets you specify the bookmark name, defaults to 'bookmark'
-git-bookmark()
-{
-  bookmark_name="bookmark"
-  if [ $# -gt 0 ] && [ -n "$1" ] ; then
-    bookmark_name="$1"
-  fi
-
-  current_branch=$(git branch | sed -n -e 's/^\* \(.*\)/\1/p')
-  git checkout -b $bookmark_name
-  git checkout $current_branch
-}
