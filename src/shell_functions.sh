@@ -19,6 +19,35 @@ git-prune-tag()
   git push $remote_name :refs/tags/$tag_name
 }
 
+# Clean up hanging branches (branches that track a remote branch which is now gone, usually because it's been merged & deleted).
+# This requires manual confirmation to delete branches.
+git-prune-branches()
+{
+  git fetch -p
+  locals_with_remote_gone=$(git branch -vv | grep "gone" | awk '{print $1}')
+  if [ ${#locals_with_remote_gone} = 0 ]; then
+    echo "No hanging branches to prune, everything is clean!"
+    return 0
+  fi
+
+  echo "These branches no longer have an upstream:\n"
+  echo "$locals_with_remote_gone\n"
+
+  read "confirmation?Enter \"yes\" to prune these branches: " 
+  if [ $confirmation = "yes" ]; then
+    local IFS=$'\n'
+    # Required for ZSH iterate through a 'for line in line1\nline2\nline3' scenario
+    if [ $ZSH_VERSION ]; then 
+      setopt sh_word_split
+    fi
+
+    for branch_name in $locals_with_remote_gone
+    do
+      git branch -D $branch_name
+    done
+  fi
+}
+
 # Keeps your master/main/whatever branch up to date. Can also be used to prepare another branch to be rebased onto the primary branch
 # This pulls the primary branch if it's behind. If it's ahead or diverged, this will alert the user to fix it manually.
 # Optional first arg lets you override the primary branch name, defaults to $DEFAULT_PRIMARY_BRANCH_NAME as defined in env_vars.sh
