@@ -52,3 +52,24 @@ git-sync()
     git checkout $current_branch
   fi
 }
+
+# Compares local & remote branches and echos if the local is up to date/ahead/behind/diverged
+git-check-diverged()
+{
+  UPSTREAM=${1:-'@{u}'}
+  LOCAL=$(git rev-parse @)
+  REMOTE=$(git rev-parse "$UPSTREAM")
+  BASE=$(git merge-base @ "$UPSTREAM")
+
+  git fetch -p
+
+  if [ $LOCAL = $REMOTE ]; then
+      echo "Up-to-date"
+  elif [ $LOCAL = $BASE ]; then
+      echo "Need to pull"
+  elif [ $REMOTE = $BASE ]; then
+      echo "Need to push"
+  else
+      echo "Diverged"
+  fi
+}
