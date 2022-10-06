@@ -19,7 +19,8 @@ git-prune-tag()
   git push $remote_name :refs/tags/$tag_name
 }
 
-# Keeps your master/main/whatever branch up to date. Can be used to prepare a branch to be rebased
+# Keeps your master/main/whatever branch up to date. Can also be used to prepare another branch to be rebased onto the primary branch
+# This pulls the primary branch if it's behind. If it's ahead or diverged, this will alert the user to fix it manually.
 # Optional first arg lets you override the primary branch name, defaults to $DEFAULT_PRIMARY_BRANCH_NAME as defined in env_vars.sh
 git-sync()
 {
@@ -28,9 +29,26 @@ git-sync()
     primary_branch="$1"
   fi
   current_branch=$(git branch | sed -n -e 's/^\* \(.*\)/\1/p')
-
-  git checkout $primary_branch
+  
+  if [ $current_branch != $primary_branch ]; then
+    git checkout $primary_branch
+  fi
   git fetch -p
-  git pull
-  git checkout $current_branch
+  
+  local=$(git rev-parse @)
+  remote=$(git rev-parse "@{u}")
+  base=$(git merge-base @ "@{u}")
+  if [ $local = $remote ]; then
+      # up to date, can just do nothing
+  elif [ $local = $base ]; then
+      git pull
+  elif [ $remote = $base ]; then
+      echo "Local ${primary_branch} is ahead, this is beyond this script's paygrade so fix it manually"
+  else
+      echo "Local and remote ${primary_branch} have diverged, this is beyond this script's paygrade so fix it manually"
+  fi
+
+  if [ $current_branch != $primary_branch ]; then
+    git checkout $current_branch
+  fi
 }
