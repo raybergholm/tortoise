@@ -16,8 +16,12 @@ java_openjdk_path="/usr/local/opt/openjdk/bin"
 PATH="${PATH}:${java_openjdk_path}"
 
 ### RUBY
-ruby_path="/usr/local/opt/ruby/bin"
-PATH="${PATH}:${ruby_path}"
+
+if [ -d "/usr/local/opt/ruby/bin" ]; then
+  ruby_path="/usr/local/opt/ruby/bin"
+  ruby_gem_path=`gem environment gemdir`/bin
+  PATH="${PATH}:${ruby_path}:${ruby_gem_path}"
+fi
 
 ### PYTHON
 
