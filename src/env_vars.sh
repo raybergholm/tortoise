@@ -12,8 +12,22 @@ export NVM_DIR="$HOME/.nvm"
 
 ### JAVA
 
-java_openjdk_path="/usr/local/opt/openjdk/bin"
-PATH="${PATH}:${java_openjdk_path}"
+# java_openjdk_path="/usr/local/opt/openjdk/bin"
+# PATH="${PATH}:${java_openjdk_path}"
+zulu_jdk_path="/Library/Java/JavaVirtualMachines/zulu-17.jdk/Contents/Home/bin"
+zulu_java_home="/Library/Java/JavaVirtualMachines/zulu-17.jdk/Contents/Home"
+export JAVA_HOME=$zulu_java_home
+
+### ANDROID
+
+if [ -d "$HOME/Library/Android/sdk" ]; then
+  android_home="$HOME/Library/Android/sdk"
+  android_emulator_path="$android_home/emulator"
+  android_platform_tools_path="$android_home/platform-tools"
+
+  export ANDROID_HOME=$android_home
+  PATH="${PATH}:${android_emulator_path}:${android_platform_tools_path}"
+fi
 
 ### RUBY
 
