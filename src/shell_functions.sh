@@ -102,3 +102,9 @@ git-check-diverged()
       echo "Diverged"
   fi
 }
+
+list_path()
+{
+  path_as_array=(${PATH//:/\\n})
+  echo $path_as_array;
+}
