@@ -103,6 +103,16 @@ git-sync()
   fi
 }
 
+git-sync-branch()
+{
+  other_branch=$DEFAULT_PRIMARY_BRANCH_NAME
+  if [ $# -gt 0 ] && [ -n "$1" ] ; then
+    other_branch="$1"
+  fi
+
+  git fetch $DEFAULT_REMOTE_NAME $other_branch:$other_branch
+}
+
 # Check if a given value is in the $PATH variable
 is-in-path()
 {
