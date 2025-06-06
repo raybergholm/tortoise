@@ -10,7 +10,13 @@ Developed for Mac running a zsh shell.
 
 ## Setup
 
-Clone this repository, then add the following snippet to your `.zshrc` file (default location: `$HOME/.zshrc`):
+Clone this repository:
+
+```bash
+git clone git@github.com:raybergholm/tortoise.git
+```
+
+Add the following snippet to your `.zshrc` file (default location: `$HOME/.zshrc`):
 
 ```bash
 export TORTOISE_ROOT="path/to/your/cloned/repository"
