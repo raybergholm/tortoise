@@ -1,22 +1,24 @@
 #!/bin/sh
 
-# Prune selected tag and push to remote.
-# Optional first arg lets you override the remote name, defaults to $DEFAULT_REMOTE_NAME as defined in env_vars.sh
-git-prune-tag()
+# Compares local & remote branches and echos if the local is up to date/ahead/behind/diverged
+git-check-diverged()
 {
-  if [ $# -lt 1 ] || [ -z "$1" ] ; then
-    echo "Add the tag name!"
-    exit 1
-  fi
+  UPSTREAM=${1:-'@{u}'}
+  LOCAL=$(git rev-parse @)
+  REMOTE=$(git rev-parse "$UPSTREAM")
+  BASE=$(git merge-base @ "$UPSTREAM")
 
-  remote_name=$DEFAULT_REMOTE_NAME
-  if [ $# -gt 1 ] && [ -n "$2"] ; then
-    remote_name="$2"
-  fi
+  git fetch -p
 
-  tag_name="$1"
-  git tag -d $tag_name
-  git push $remote_name :refs/tags/$tag_name
+  if [ $LOCAL = $REMOTE ]; then
+      echo "✅ This branch is up-to-date"
+  elif [ $LOCAL = $BASE ]; then
+      echo "⬇️ This branch is behind the remote"
+  elif [ $REMOTE = $BASE ]; then
+      echo "⬆️ This branch is ahead of the remote"
+  else
+      echo "🔀 This branch has diverged from remote"
+  fi
 }
 
 # Clean up hanging branches (branches that track a remote branch which is now gone, usually because it's been merged & deleted).
@@ -33,8 +35,8 @@ git-prune-branches()
   echo "These branches no longer have an upstream:\n"
   echo "$locals_with_remote_gone\n"
 
-  read "confirmation?Enter \"yes\" to prune these branches: " 
-  if [ $confirmation = "yes" ]; then
+  read "confirmation?Going to prune these hanging branches. Enter \"ok\" to confirm: " 
+  if [ $confirmation = "ok" ]; then
     local IFS=$'\n'
     # Required for ZSH iterate through a 'for line in line1\nline2\nline3' scenario
     if [ $ZSH_VERSION ]; then 
@@ -46,6 +48,25 @@ git-prune-branches()
       git branch -D $branch_name
     done
   fi
+}
+
+# Prune selected tag and push to remote.
+# Optional first arg lets you override the remote name, defaults to $DEFAULT_REMOTE_NAME as defined in env_vars.sh
+git-prune-tag()
+{
+  if [ $# -lt 1 ] || [ -z "$1" ] ; then
+    echo "Usage: git-prune-tag tag_name [remote_name]"
+    return 1
+  fi
+
+  remote_name=$DEFAULT_REMOTE_NAME
+  if [ $# -gt 1 ] && [ -n "$2"] ; then
+    remote_name="$2"
+  fi
+
+  tag_name="$1"
+  git tag -d $tag_name
+  git push $remote_name :refs/tags/$tag_name
 }
 
 # Keeps your master/main/whatever branch up to date. Can also be used to prepare another branch to be rebased onto the primary branch
@@ -82,35 +103,31 @@ git-sync()
   fi
 }
 
-# Compares local & remote branches and echos if the local is up to date/ahead/behind/diverged
-git-check-diverged()
+# Check if a given value is in the $PATH variable
+is-in-path()
 {
-  UPSTREAM=${1:-'@{u}'}
-  LOCAL=$(git rev-parse @)
-  REMOTE=$(git rev-parse "$UPSTREAM")
-  BASE=$(git merge-base @ "$UPSTREAM")
-
-  git fetch -p
-
-  if [ $LOCAL = $REMOTE ]; then
-      echo "Up-to-date"
-  elif [ $LOCAL = $BASE ]; then
-      echo "Need to pull"
-  elif [ $REMOTE = $BASE ]; then
-      echo "Need to push"
-  else
-      echo "Diverged"
+  if [ $# -lt 1 ] || [ -z "$1" ] ; then
+    echo "Usage: is-in-path somevalue"
+    return 1
   fi
+
+  path_as_array=(${PATH//:/\\n})
+  # echo $path_as_array
+  result=$path_as_array | grep -Fx $1;
+
+  echo "$result"
 }
 
-list-path()
+# Reload the terminal with less typing
+reload-me()
+{
+  source $HOME/.zshrc
+  echo "\nReloaded terminal from $HOME/.zshrc\n"
+}
+
+# Echos the $PATH variable, split on : and displayed as a list.
+show-path()
 {
   path_as_array=(${PATH//:/\\n})
   echo $path_as_array;
-}
-
-reload-me()
-{
-  source $SHELL_PROFILE_FILE
-  echo "\nReloaded terminal from $SHELL_PROFILE_FILE\n"
 }
