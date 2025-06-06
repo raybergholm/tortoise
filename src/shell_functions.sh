@@ -108,3 +108,9 @@ list-path()
   path_as_array=(${PATH//:/\\n})
   echo $path_as_array;
 }
+
+reload-me()
+{
+  source $SHELL_PROFILE_FILE
+  echo "\nReloaded terminal from $SHELL_PROFILE_FILE\n"
+}
