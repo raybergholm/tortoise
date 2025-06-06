@@ -74,14 +74,14 @@ git-prune-tag()
 # Optional first arg lets you override the primary branch name, defaults to $DEFAULT_PRIMARY_BRANCH_NAME as defined in env_vars.sh
 git-sync()
 {
-  primary_branch=$DEFAULT_PRIMARY_BRANCH_NAME
+  other_branch=$DEFAULT_PRIMARY_BRANCH_NAME
   if [ $# -gt 0 ] && [ -n "$1" ] ; then
-    primary_branch="$1"
+    other_branch="$1"
   fi
   current_branch=$(git branch | sed -n -e 's/^\* \(.*\)/\1/p')
   
-  if [ $current_branch != $primary_branch ]; then
-    git checkout $primary_branch
+  if [ $current_branch != $other_branch ]; then
+    git checkout $other_branch
   fi
   git fetch -p
   
@@ -93,12 +93,12 @@ git-sync()
   elif [ $local = $base ]; then
       git pull
   elif [ $remote = $base ]; then
-      echo "Local ${primary_branch} is ahead, this is beyond this script's paygrade so fix it manually"
+      echo "⬆️ Local ${other_branch} is ahead, this script will not make any further changes (if this is intention, please push manually)"
   else
-      echo "Local and remote ${primary_branch} have diverged, this is beyond this script's paygrade so fix it manually"
+      echo "🔀 Local and remote ${other_branch} have diverged, this script will not make any further changes (please handle the diverged branches manually)"
   fi
 
-  if [ $current_branch != $primary_branch ]; then
+  if [ $current_branch != $other_branch ]; then
     git checkout $current_branch
   fi
 }
