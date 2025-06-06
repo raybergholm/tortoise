@@ -37,4 +37,4 @@ source "$HOME/.zshrc"
 
 ## Docs
 
-[Built-in functions for your convenience](./docs/docs.md#Built-in functions)
+[Built-in functions for your convenience](./docs/docs.md#Built-in%20functions)
