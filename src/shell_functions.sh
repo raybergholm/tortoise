@@ -69,6 +69,18 @@ git-prune-tag()
   git push $remote_name :refs/tags/$tag_name
 }
 
+# One command to rebase the current branch onto the primary branch (default is master/main, can be overridden with first arg).
+git-rebase-trunk()
+{
+  other_branch=$DEFAULT_PRIMARY_BRANCH_NAME
+  if [ $# -gt 0 ] && [ -n "$1" ] ; then
+    other_branch="$1"
+  fi
+
+  git-sync-branch $other_branch
+  git rebase $other_branch
+}
+
 # Keeps your master/main/whatever branch up to date. Can also be used to prepare another branch to be rebased onto the primary branch
 # This pulls the primary branch if it's behind. If it's ahead or diverged, this will alert the user to fix it manually.
 # Optional first arg lets you override the primary branch name, defaults to $DEFAULT_PRIMARY_BRANCH_NAME as defined in env_vars.sh

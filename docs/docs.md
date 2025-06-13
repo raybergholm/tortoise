@@ -22,6 +22,14 @@ Clean up hanging branches (branches that track a remote branch which is now gone
 git-prune-tags tagname
 ```
 
+### git-rebase-trunk
+
+```bash
+git-rebase-trunk [branchname]
+```
+
+Executes `git-sync-branch [branchname]` then rebases the current branch from that branch.
+
 ### git-sync
 
 ```bash
@@ -29,6 +37,12 @@ git-sync
 ```
 
 Swaps to the trunk branch (by default `$DEFAULT_PRIMARY_BRANCH_NAME`), pulls from remote then swap back to your current branch.
+
+```bash
+git-sync-branch [branchname]
+```
+
+Fetches the named branch from remote and force updates the local branch to match it. If no `branchname` arg, it defaults to the value of `$DEFAULT_PRIMARY_BRANCH_NAME`.
 
 ### show-path
 
