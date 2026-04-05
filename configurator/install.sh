@@ -1,8 +1,5 @@
 source ./dependency_versions.sh
 
-read -p "Which language? (ts): " language
-read -p "Which environment? (node|next): " environment
-
 npm install -D --save-exact "typescript@$dep_ver_typescript"
 
 npm install -D --save-exact "prettier@$dep_ver_prettier"
