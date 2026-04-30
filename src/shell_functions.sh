@@ -5,7 +5,7 @@
 git-prune-tag()
 {
   if [ $# -lt 1 ] || [ -z "$1" ] ; then
-    echo "Add the tag name!"
+    echo "Usage: git-prune-tag <tag_name> [remote_name]"
     exit 1
   fi
 
@@ -46,25 +46,6 @@ git-prune-branches()
       git branch -D $branch_name
     done
   fi
-}
-
-# Prune selected tag and push to remote.
-# Optional first arg lets you override the remote name, defaults to $DEFAULT_REMOTE_NAME as defined in env_vars.sh
-git-prune-tag()
-{
-  if [ $# -lt 1 ] || [ -z "$1" ] ; then
-    echo "Usage: git-prune-tag tag_name [remote_name]"
-    return 1
-  fi
-
-  remote_name=$DEFAULT_REMOTE_NAME
-  if [ $# -gt 1 ] && [ -n "$2"] ; then
-    remote_name="$2"
-  fi
-
-  tag_name="$1"
-  git tag -d $tag_name
-  git push $remote_name :refs/tags/$tag_name
 }
 
 # One command to rebase the current branch onto the primary branch (default is master/main, can be overridden with first arg).
