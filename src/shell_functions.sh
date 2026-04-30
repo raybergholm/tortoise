@@ -33,7 +33,7 @@ git-prune-branches()
   echo "These branches no longer have an upstream:\n"
   echo "$locals_with_remote_gone\n"
 
-  read "confirmation?Enter \"ok\" to prune these branches: "
+  read "confirmation?About to prune the hanging branches. Enter \"ok\" to confirm: "
   if [ $confirmation = "ok" ]; then
     local IFS=$'\n'
     # Required for ZSH iterate through a 'for line in line1\nline2\nline3' scenario
