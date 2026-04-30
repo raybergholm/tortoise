@@ -147,7 +147,8 @@ git-check-diverged()
   fi
 }
 
-list-path()
+# Display the $PATH variable in a delimited list
+show-path()
 {
   path_as_array=(${PATH//:/\\n})
   echo $path_as_array;
