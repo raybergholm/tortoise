@@ -137,13 +137,13 @@ git-check-diverged()
   git fetch -p
 
   if [ $LOCAL = $REMOTE ]; then
-      echo "Up-to-date"
+      echo "✅ This branch is up-to-date"
   elif [ $LOCAL = $BASE ]; then
-      echo "Need to pull"
+      echo "⬇️ This branch is behind the remote"
   elif [ $REMOTE = $BASE ]; then
-      echo "Need to push"
+      echo "⬆️ This branch is ahead of the remote"
   else
-      echo "Diverged"
+      echo "🔀 This branch has diverged from remote"
   fi
 }
 

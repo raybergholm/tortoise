@@ -8,6 +8,8 @@
 git-check-diverged
 ```
 
+Checks if the current branch has diverged from its remote.
+
 ### git-prune-branches
 
 ```bash
