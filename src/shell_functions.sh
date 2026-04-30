@@ -48,6 +48,50 @@ git-prune-branches()
   fi
 }
 
+# Prune selected tag and push to remote.
+# Optional first arg lets you override the remote name, defaults to $DEFAULT_REMOTE_NAME as defined in env_vars.sh
+git-prune-tag()
+{
+  if [ $# -lt 1 ] || [ -z "$1" ] ; then
+    echo "Usage: git-prune-tag tag_name [remote_name]"
+    return 1
+  fi
+
+  remote_name=$DEFAULT_REMOTE_NAME
+  if [ $# -gt 1 ] && [ -n "$2"] ; then
+    remote_name="$2"
+  fi
+
+  tag_name="$1"
+  git tag -d $tag_name
+  git push $remote_name :refs/tags/$tag_name
+}
+
+# One command to rebase the current branch onto the primary branch (default is master/main, can be overridden with first arg).
+git-rebase-trunk()
+{
+  other_branch=$DEFAULT_PRIMARY_BRANCH_NAME
+  if [ $# -gt 0 ] && [ -n "$1" ] ; then
+    other_branch="$1"
+  fi
+
+  git-sync-branch $other_branch
+  git rebase $other_branch
+}
+
+git-sync-branch()
+{
+  other_branch=$DEFAULT_PRIMARY_BRANCH_NAME
+  if [ $# -gt 0 ] && [ -n "$1" ] ; then
+    other_branch="$1"
+  fi
+
+  echo "Will sync branch $other_branch"
+  git fetch -f $DEFAULT_REMOTE_NAME $other_branch:$other_branch
+  echo "Synced branch $other_branch from remote $DEFAULT_REMOTE_NAME/$other_branch"
+}
+
+# LEGACY: git-sync-branch will replace this, which can do the same without needing to switch branches.
 # Keeps your master/main/whatever branch up to date. Can also be used to prepare another branch to be rebased onto the primary branch
 # This pulls the primary branch if it's behind. If it's ahead or diverged, this will alert the user to fix it manually.
 # Optional first arg lets you override the primary branch name, defaults to $DEFAULT_PRIMARY_BRANCH_NAME as defined in env_vars.sh
