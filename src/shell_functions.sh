@@ -107,6 +107,17 @@ git-sync()
   fi
 }
 
+git-branch-exists()
+{
+  branch_name="$1"
+  if [ -z "$branch_name" ]; then
+    echo "Usage: git-branch-exists <branch_name>"
+    return 1
+  fi
+
+  git ls-remote --heads origin refs/heads/$branch_name
+}
+
 # Compares local & remote branches and echos if the local is up to date/ahead/behind/diverged
 git-check-diverged()
 {
